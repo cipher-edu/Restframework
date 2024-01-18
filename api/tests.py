@@ -1,7 +1,6 @@
 import random
 from django.test import TestCase
-from api.models import Book  # Replace 'api' with the actual name of your Django app
-
+from api.models import Book 
 class BookModelTestOptom(TestCase):
 
     def create_book(self, title="Test Title", subtitle="Test Subtitle", author="Test Author",
@@ -37,7 +36,6 @@ class BookModelTestOptom(TestCase):
 class BookModelTestMini(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Set up non-modified objects used by all test methods
         Book.objects.create(
             title='Sample Title',
             subtitle='Sample Subtitle',
