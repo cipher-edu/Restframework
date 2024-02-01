@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
     'drf_yasg',
+    'app'
 
 ]
 
@@ -57,13 +60,13 @@ MIDDLEWARE = [
 #         'rest_framework.peremissions.AllowAny',
 #     ]
 # }
-# REST_FRAMEWORK = {
-#     # 'DEFAULT_AUTHENTICATION_CLASSES': (
-#     #     'rest_framework.authentication.TokenAuthentication',
-#     # ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.AllowAny', )
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    
+}
 ROOT_URLCONF = 'RestApi.urls'
 
 TEMPLATES = [
@@ -83,7 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RestApi.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -131,9 +133,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS=[
-    BASE_DIR/ "static"
-]
+# STATICFILES_DIRS=[
+#     BASE_DIR/ "static"
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
