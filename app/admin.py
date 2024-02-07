@@ -19,11 +19,16 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'price', 'quantity')
+    list_display = ('title', 'author', 'price', 'quantity', 'count_books')
     list_filter = ('author',)
     search_fields = ('title', 'author', 'price', 'quantity')
     list_display_links = ('title',)
     list_editable = ('author', 'price', 'quantity',)
+
+    def count_books(self, obj):
+        return obj.quantity
+
+    count_books.short_description = 'Kitoblar soni'
 
 
 class ReturnedDateFilter(admin.SimpleListFilter):
