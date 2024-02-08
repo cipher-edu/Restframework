@@ -19,7 +19,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'price', 'quantity', 'count_books')
+    list_display = ('title', 'author', 'price', 'quantity', 'count_books', 'books_difference')
     list_filter = ('author',)
     search_fields = ('title', 'author', 'price', 'quantity')
     list_display_links = ('title',)
@@ -29,6 +29,13 @@ class BookAdmin(admin.ModelAdmin):
         return obj.quantity
 
     count_books.short_description = 'Kitoblar soni'
+
+    def books_difference(self, obj):
+        issued_books_count = IssuedBook.objects.filter(book=obj).count()
+        return obj.quantity - issued_books_count
+
+    books_difference.short_description = 'Kitoblar farqi'
+
 
 
 class ReturnedDateFilter(admin.SimpleListFilter):

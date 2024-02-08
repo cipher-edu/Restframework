@@ -73,7 +73,7 @@ class IssuedBook(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name='Kitob')
     issued_date = models.DateField(verbose_name='Berilgan sana', auto_now_add=True, editable=False)
     returned_date = models.DateField(verbose_name='Qaytarilgan sana', null=True, blank=True)
-
+    quantity = models.IntegerField()
     def __str__(self):
         return f'{self.student} - {self.book}'
 
