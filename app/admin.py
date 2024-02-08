@@ -32,9 +32,12 @@ class BookAdmin(admin.ModelAdmin):
 
     def books_difference(self, obj):
         issued_books_count = IssuedBook.objects.filter(book=obj).count()
-        return obj.quantity - issued_books_count
+        returned_books_count = IssuedBook.objects.filter(book=obj, returned_date__isnull=False).count()
+       
+        return f"Berilgan kitoblar: {issued_books_count}\n, Qaytarilgan kitoblar: {returned_books_count}\n,"
 
     books_difference.short_description = 'Kitoblar farqi'
+
 
 
 
