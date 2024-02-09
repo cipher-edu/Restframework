@@ -55,7 +55,7 @@ class Book(models.Model):
     year = models.IntegerField(verbose_name='Nashr yili')
     pages = models.IntegerField(verbose_name='Sahifalar soni')
     price = models.IntegerField(verbose_name='Narxi')
-    quantity = models.IntegerField(verbose_name='Soni')
+    quantity = models.IntegerField(verbose_name='Jami kitoblar')
     qr_code = models.CharField(max_length=255, verbose_name='QR-kod', blank=True, null=True)
     link_to_book = models.CharField(max_length=255, verbose_name='Kitob havolasi', blank=True, null=True)
 

@@ -19,7 +19,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'price', 'quantity', 'count_books', 'books_difference')
+    list_display = ('title', 'author', 'price', 'quantity', 'qolgan_book', 'books_difference')
     list_filter = ('author',)
     search_fields = ('title', 'author', 'price', 'quantity')
     list_display_links = ('title',)
@@ -33,13 +33,16 @@ class BookAdmin(admin.ModelAdmin):
     def books_difference(self, obj):
         issued_books_count = IssuedBook.objects.filter(book=obj).count()
         returned_books_count = IssuedBook.objects.filter(book=obj, returned_date__isnull=False).count()
-       
-        return f"Berilgan kitoblar: {issued_books_count}\n, Qaytarilgan kitoblar: {returned_books_count}\n,"
+        return f"Berilgan kitoblar: {issued_books_count}\n, Qaytarilgan kitoblar: {returned_books_count}\n"
 
     books_difference.short_description = 'Kitoblar farqi'
 
-
-
+    def qolgan_book(self, obj):
+        issued_books_count = IssuedBook.objects.filter(book=obj).count()
+        returned_books_count = IssuedBook.objects.filter(book=obj, returned_date__isnull=False).count()
+        have_book = (obj.quantity - issued_books_count)+returned_books_count
+        return have_book
+    qolgan_book.short_description = 'Mavjud kitoblar soni'
 
 class ReturnedDateFilter(admin.SimpleListFilter):
     title = 'Kitob qaytarilganligi'
@@ -98,3 +101,15 @@ class IssuedBookAdmin(admin.ModelAdmin):
                               level=messages.SUCCESS)
 
         super().save_model(request, obj, form, change)
+    
+    def test_book_num(self, request, obj):
+        try:
+            book = Book.objects.all()
+            issued_book = IssuedBook.objects.all()
+            if issued_book <= book:
+                result = "Bu kitob miqdori yetarli"
+                return result
+        except:
+            result_error = "Siz kiritgan miqdorda bu kitobdan mavjud emas"
+            return result_error
+        super().save_model(request, obj)
