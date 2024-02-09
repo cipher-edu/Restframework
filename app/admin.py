@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-
 from app.models import Student, Book, IssuedBook
 
 # Register your models here.
@@ -103,13 +102,42 @@ class IssuedBookAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
     
     def test_book_num(self, request, obj):
-        try:
-            book = Book.objects.all()
-            issued_book = IssuedBook.objects.all()
-            if issued_book <= book:
-                result = "Bu kitob miqdori yetarli"
-                return result
-        except:
-            result_error = "Siz kiritgan miqdorda bu kitobdan mavjud emas"
-            return result_error
-        super().save_model(request, obj)
+    # def validate(self, data):
+        # book = Book.objects.get('quantity', None)
+        # issued_book = IssuedBook.objects.get('quantity', None)
+        while True:
+            if Book.objects.filter(book=obj)>=IssuedBook.objects.filter(book=obj):
+                return f"tugri"
+            else:
+                f"error"
+                break 
+
+        # if issued_book >= book:
+        #     raise ValidationError(
+        #         {
+        #             'status': False,
+        #             'message': "Kitob miqdori yetarli emas!!!"
+        #         }
+        #     )
+        # return data
+        # try:
+        # issued_books_count = IssuedBook.objects.filter(book=obj).count()
+        # returned_books_count = Book.objects.filter(book=obj,).count()
+        # if issued_books_count <= returned_books_count:
+        #     return f"Siz kiritgan kitob miqdori yetarli"
+        # else:
+        #     return f"errroe"
+        # if  Book.objects.filter(book=obj)>=IssuedBook.objects.filter(book=obj):
+        #     return f"error"
+        # else:
+        #     return f"tugri"
+        # return returned_books_count
+        #     book = Book.objects.all()
+        #     issued_book = IssuedBook.objects.all()
+        #     if issued_book <= book:
+        #         result = "Bu kitob miqdori yetarli"
+        #         return result
+        # except:
+        #     result_error = "Siz kiritgan miqdorda bu kitobdan mavjud emas"
+        #     return result_error
+        # super().save_model(request, obj)
