@@ -24,7 +24,7 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ('title', 'author', 'price', 'quantity')
     list_display_links = ('title',)
     list_editable = ('author', 'price', 'quantity',)
-
+    list_per_page = 25
     def count_books(self, obj):
         return obj.quantity
 
@@ -68,33 +68,37 @@ class ReturnedDateFilter(admin.SimpleListFilter):
 @admin.register(IssuedBook)
 class IssuedBookAdmin(admin.ModelAdmin):
     list_display = ('book', 'student', 'issued_date')
-    list_filter = (ReturnedDateFilter, 'issued_date', 'book')
-    search_fields = (
-        'book__author', 'book__title', 'book__publisher', 'book__year', 'book__pages', 'book__price', 'book__quantity',
-        'student__hemis_id', 'student__full_name', 'student__JSHSHIR', 'student__passport', 'student__course',
-        'student__faculty', 'student__group', 'student__academic_year', 'student__semester', 'student__is_graduated',
-        'student__speciality', 'student__type_of_education', 'student__form_of_education', 'student__payment_form',
-        'student__previous_education', 'student__student_category', 'student__social_category', 'student__command',
-        'student__registration_date', 'issued_date', 'returned_date')
-    list_display_links = ('book',)
+    list_filter = ('issued_date', 'book__title')
+    search_fields = ('book__title', 'student__full_name', 'student__hemis_id')
+    list_display_links = ('book', 'student')
+    list_per_page = 25
     autocomplete_fields = ('book', 'student')
 
     def save_model(self, request, obj, form, change):
-        if obj._state.adding and obj.returned_date is None:  # Checking if it's a new object being added
+        if obj._state.adding and obj.returned_date is None:  
             book = obj.book
             if book.quantity > 0:
-                book.quantity -= 1
-                book.save()
-                self.message_user(request, f"{book.title} nomli kitob {obj.student} ga muvaffaqiyatli berildi.",
-                                  level=messages.SUCCESS)
+                if book.quantity >= obj.quantity: 
+                    if book.quantity >= 5:  
+                        book.quantity -= obj.quantity
+                        book.save()
+                        self.message_user(request, f"{obj.quantity} {book.title} nomli kitob {obj.student} ga muvaffaqiyatli berildi.",
+                                          level=messages.SUCCESS)
+                    else:
+                        self.message_user(request, f"{book.title} nomli kitobdan {obj.quantity} ta omborda qolmagan.", level=messages.ERROR)
+                        return
+                else:
+                    self.message_user(request, f"{book.title} nomli kitob omborda yetarli emas.", level=messages.ERROR)
+                    return
             else:
                 self.message_user(request, f"{book.title} nomli kitob omborda yo'q.", level=messages.ERROR)
+                return
 
         if not obj._state.adding and 'returned_date' in form.changed_data and obj.returned_date is not None:
             book = obj.book
-            book.quantity += 1
+            book.quantity += obj.quantity 
             book.save()
-            self.message_user(request, f"{book.title} nomli kitob {obj.student} dan muvaffaqiyatli qaytarildi.",
+            self.message_user(request, f"{obj.quantity} {book.title} nomli kitob {obj.student} dan muvaffaqiyatli qaytarildi.",
                               level=messages.SUCCESS)
 
         super().save_model(request, obj, form, change)
