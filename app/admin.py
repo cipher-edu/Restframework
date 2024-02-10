@@ -101,15 +101,22 @@ class IssuedBookAdmin(admin.ModelAdmin):
                               level=messages.SUCCESS)
 
         super().save_model(request, obj, form, change)
-    
-    def test_book_num(self, request, obj):
-        try:
-            book = Book.objects.all()
-            issued_book = IssuedBook.objects.all()
-            if issued_book <= book:
-                result = "Bu kitob miqdori yetarli"
-                return result
-        except:
-            result_error = "Siz kiritgan miqdorda bu kitobdan mavjud emas"
-            return result_error
-        super().save_model(request, obj)
+    def book_num(request, self, obj):
+        book = Book.objects.filter(book=obj)
+        isseud_book = IssuedBook.objects.filter(book=obj)
+        if isseud_book(obj.quantity) <= book(obj.quantity):
+            return  f"yetarli miqdor"
+        else:
+            return f"error"    
+    book_num
+    # def test_book_num(self, request, obj):
+    #     try:
+    #         book = Book.objects.all()
+    #         issued_book = IssuedBook.objects.all()
+    #         if issued_book <= book:
+    #             result = "Bu kitob miqdori yetarli"
+    #             return result
+    #     except:
+    #         result_error = "Siz kiritgan miqdorda bu kitobdan mavjud emas"
+    #         return result_error
+    #     super().save_model(request, obj)
