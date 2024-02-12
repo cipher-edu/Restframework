@@ -78,25 +78,29 @@ class IssuedBookAdmin(admin.ModelAdmin):
     autocomplete_fields = ('book', 'student')
 
     def save_model(self, request, obj, form, change):
-        if obj._state.adding and obj.returned_date is None:  
+        if obj._state.adding and obj.returned_date is  None:  
             book = obj.book
-            if book.quantity > 0:
-                if book.quantity >= obj.quantity: 
-                    if book.quantity >= 5:  
-                        book.quantity -= obj.quantity
-                        book.save()
-                        self.message_user(request, f"{obj.quantity} {book.title} nomli kitob {obj.student} ga muvaffaqiyatli berildi.",
-                                          level=messages.SUCCESS)
+            if obj.student  is not obj.returned_date and book.title is  None:
+                if book.quantity > 0:
+                    if book.quantity >= obj.quantity: 
+                        if book.quantity >= 5:  
+                            book.quantity -= obj.quantity
+                            book.save()                        
+                            self.message_user(request, f"{obj.quantity} {book.title} nomli kitob {obj.student} ga muvaffaqiyatli berildi.",
+                                            level=messages.SUCCESS)
+                        else:
+                            self.message_user(request, f"{book.title} nomli kitobdan {obj.quantity} ta omborda qolmagan.", level=messages.ERROR)
+                            return
                     else:
-                        self.message_user(request, f"{book.title} nomli kitobdan {obj.quantity} ta omborda qolmagan.", level=messages.ERROR)
+                        self.message_user(request, f"{book.title} nomli kitob omborda yetarli emas.", level=messages.ERROR)
                         return
                 else:
-                    self.message_user(request, f"{book.title} nomli kitob omborda yetarli emas.", level=messages.ERROR)
+                    self.message_user(request, f"{book.title} nomli kitob omborda yo'q.", level=messages.ERROR)
                     return
             else:
-                self.message_user(request, f"{book.title} nomli kitob omborda yo'q.", level=messages.ERROR)
+                self.message_user(request, f"{obj.student} sizda {book.title} nomli kitob mavjud, shuning uchun boshqa kitob berilmaydi!",
+                                level=messages.ERROR)
                 return
-
         if not obj._state.adding and 'returned_date' in form.changed_data and obj.returned_date is not None:
             book = obj.book
             book.quantity += obj.quantity 

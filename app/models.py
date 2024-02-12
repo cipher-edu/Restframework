@@ -12,7 +12,7 @@ class Student(models.Model):
     }
 
     hemis_id = models.BigIntegerField(verbose_name='HEMIS ID', unique=True)
-    full_name = models.CharField(max_length=255, verbose_name='Tuliq ismi', editable=False)
+    full_name = models.CharField(max_length=255, verbose_name='Tuliq ismi',)
     citizenship = models.CharField(max_length=255, verbose_name='Fuqaroligi')
     country = models.CharField(max_length=255, verbose_name='Mamlakati')
     nationality = models.CharField(max_length=255, verbose_name='Millati')
